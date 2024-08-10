@@ -2,6 +2,7 @@ package main
 
 import (
 	"drink-api/controller"
+	"drink-api/usecase"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,7 +10,9 @@ import (
 func main() {
 	server := gin.Default()
 
-	DrinksController := controller.NewDrinksController()
+	DrinksUsecase := usecase.NewDrinksController()
+
+	DrinksController := controller.NewDrinksController(DrinksUsecase)
 
 	server.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
