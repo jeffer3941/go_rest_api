@@ -33,5 +33,11 @@ func main() {
 
 	server.GET("/drink/:id", DrinksController.GetDrinksByIdController)
 
+	server.POST("/createdrink", DrinksController.CreateDrinksController)
+
+	server.POST("/updatedrink", DrinksController.UpdateDrinksController)
+
+	server.POST("/deletedrink", DrinksController.DeleteDrinksController)
+
 	server.Run(":8080")
 }

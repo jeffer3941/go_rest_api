@@ -50,3 +50,33 @@ func (dr *DrinksRepository) GetDrinksById(id int) (model.Drinks, error) {
 	}
 	return drinks, nil
 }
+
+func (dr *DrinksRepository) CreateDrinks(drink model.Drinks) (model.Drinks, error) {
+	query := "INSERT INTO drinks (name, description, value) VALUES ($1, $2, $3) RETURNING id"
+	err := dr.connection.QueryRow(query, drink.Name, drink.Description, drink.Value).Scan(&drink.Id)
+	if err != nil {
+		fmt.Println(err)
+		return model.Drinks{}, err
+	}
+	return drink, nil
+}
+
+func (dr *DrinksRepository) UpdateDrinks(id int, drink model.Drinks) (model.Drinks, error) {
+	query := "UPDATE drinks SET name = $1, description = $2, value = $3 WHERE id = $4"
+	_, err := dr.connection.Exec(query, drink.Name, drink.Description, drink.Value, id)
+	if err != nil {
+		fmt.Println(err)
+		return model.Drinks{}, err
+	}
+	return drink, nil
+}
+
+func (dr *DrinksRepository) DeleteDrinks(id int) error {
+	query := "DELETE FROM drinks WHERE id = $1"
+	_, err := dr.connection.Exec(query, id)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return nil
+}
