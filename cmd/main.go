@@ -2,6 +2,8 @@ package main
 
 import (
 	"drink-api/controller"
+	"drink-api/db"
+	"drink-api/repository"
 	"drink-api/usecase"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +12,14 @@ import (
 func main() {
 	server := gin.Default()
 
-	DrinksUsecase := usecase.NewDrinksController()
+	dbConnection, err := db.ConnectDB()
+	if err != nil {
+		panic(err)
+	}
+
+	DrinksRepository := repository.NewDrinksRepository(dbConnection)
+
+	DrinksUsecase := usecase.NewDrinksController(DrinksRepository)
 
 	DrinksController := controller.NewDrinksController(DrinksUsecase)
 
@@ -21,6 +30,8 @@ func main() {
 	})
 
 	server.GET("/drinks", DrinksController.GetDrinksController)
+
+	server.GET("/drink/:id", DrinksController.GetDrinksByIdController)
 
 	server.Run(":8080")
 }
