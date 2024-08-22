@@ -1,10 +1,10 @@
 package db
 
 import (
-	"database/sql"
-	"fmt"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 
-	_ "github.com/lib/pq"
+	"fmt"
 )
 
 const (
@@ -16,21 +16,16 @@ const (
 	sslmode  = "disable"
 )
 
-func ConnectDB() (*sql.DB, error) {
+func ConnectDB() (*gorm.DB, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
 
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
+	db, err := gorm.Open(postgres.Open(psqlInfo), &gorm.Config{})
 
-	fmt.Println("Connected to " + dbname)
+	if err != nil {
+		return nil, err
+	}
 
 	return db, nil
 }
